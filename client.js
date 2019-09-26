@@ -1,8 +1,10 @@
 require('dotenv').config()
-const socket = require('socket.io-client')(`http://localhost:${process.env.PORT}`)
+const socket = require('socket.io-client')(`https://socket-io-chatter.herokuapp.com/`)
 const repl = require('repl')
 
 let username = null
+
+
 
 socket.on('disconnect', () => {
     socket.emit('disconnect')
