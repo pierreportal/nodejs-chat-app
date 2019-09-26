@@ -1,4 +1,5 @@
-const socket = require('socket.io-client')('http://localhost:3000')
+require('dotenv').config()
+const socket = require('socket.io-client')(`http://localhost:${process.env.PORT}`)
 const repl = require('repl')
 
 let username = null
@@ -10,7 +11,8 @@ socket.on('disconnect', () => {
 socket.on('connect', () => {
     console.clear()
     console.log('start chatting !\n')
-    username = process.argv[2]
+    const [, , name] = process.argv
+    username = name
 })
 
 socket.on('message', data => {
