@@ -13,9 +13,7 @@ http.listen(process.env.PORT, () => console.log('listening on port 3000'));
 
 
 io.on('connection', socket => {
-
     console.log('connection...');
-
     socket.on('message', data => {
         socket.broadcast.emit('message', data);
     });
