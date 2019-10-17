@@ -5,10 +5,7 @@ const http = require('http').createServer((req, res) => {
     res.end();
 }).listen(3000, () => console.log('listening on port 3000'));
 
-
 const io = require('socket.io')(http)
-
-
 
 // CONNECT
 io.on('connection', socket => {
@@ -29,8 +26,3 @@ io.on('connection', socket => {
         console.log(chalk.red('Disconnection.'));
     });
 });
-
-// DISCONNECT
-// io.on('disconnect', () => {
-//     console.log(chalk.red('Disconnection.'))
-// });
