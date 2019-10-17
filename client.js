@@ -1,42 +1,51 @@
-require('dotenv').config()
-const socket = require('socket.io-client')(`http://localhost:3000`)
-const repl = require("repl")
-const chalk = require('chalk');
+const socket = require('socket.io-client')('http://localhost:3000')
+const chalk = require('chalk')
+const repl = require('repl')
 
-let username = null
+// const rl = require('readline').createInterface({
+//     input: process.stdin,
+//     output: process.stdout
+// });
 
-// CONNECT SOCKET
+
+let ID = null
+
+// CONNECT
 socket.on('connect', () => {
+    [, , ID] = process.argv;
+
     console.clear()
-    process.stdout.write(chalk.inverse('start chatting !\n'))
-    const [, , name] = process.argv
-    username = name
-    socket.send({ type: 'program', msg: 'is connected', username })
+    console.log(chalk.blue(`${ID} connected to server...`));
+    socket.send({ type: 'program', content: `${ID} is connected.` })
 });
 
-
-
-// RECEIVE MSG
 socket.on('message', data => {
-    const { type, msg, username } = data
-    const res = chalk.italic.magenta(username + ' ~ ') + msg.split('\n')[0]
-    type === 'program' ? console.log(chalk.inverse.magenta(res)) : console.log(res)
-    // console.log('--->', chalk.italic.magenta(username + ' ~'), msg.split('\n')[0])
+    const { ID, type, content } = data
+    type && type === 'program' ? console.log(`${chalk.red(content)}`) : console.log(`${chalk.magenta(ID)} ~ ${chalk.blue(content)}`)
+    // sendBack()
 });
-
-// DISCONNECT
-socket.on('disconnect', () => {
-    socket.emit('disconnect')
-    // socket.send({ type: 'program', msg: 'left', username })
-    // console.log('OUPS')
-});
-
-// START PROMPT
 
 repl.start({
     prompt: '',
+
     eval: msg => {
-        socket.send({ msg, username })
-        // console.clear()
+        socket.send({ ID, type: 'client', content: msg })
     }
-})
+});
+
+//#############################
+// socket.on('disconnection', () => {
+//     console.clear();
+//     socket.send({ type: 'program', content: `${ID} left.` })
+// });
+//#############################
+
+// setTimeout(() => {
+//     socket.send({ ID, type: 'client', content: 'timmed message' })
+// }, 1000)
+
+// const sendBack = () => {
+//     setTimeout(() => {
+//         socket.send({ ID, type: 'client', content: 'back' })
+//     }, 1000)
+// }
